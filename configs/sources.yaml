@@ -1,0 +1,79 @@
+# Official pharmaceutical data source registry
+# Endpoints and URLs verified against public documentation.
+# Do not invent endpoints. Update this file when sources change.
+
+sources:
+  openfda_events:
+    name: "OpenFDA Drug Adverse Event Reports"
+    short_name: openfda_events
+    official_url: "https://open.fda.gov/apis/drug/event/"
+    api_endpoint: "https://api.fda.gov/drug/event.json"
+    bulk_downloads_url: "https://open.fda.gov/data/downloads/"
+    description: >
+      FAERS adverse-event reports submitted to FDA. Reports do not prove
+      causation. Use for exploratory pharmacovigilance analytics only.
+    license_terms: "https://open.fda.gov/apis/terms/"
+    format: json
+    retrieval_method: api_pagination
+    default_limit_per_page: 100
+    max_limit_per_page: 1000
+    schema_version: "openfda-drug-event-v1"
+    enabled: true
+
+  openfda_ndc:
+    name: "OpenFDA National Drug Code Directory"
+    short_name: openfda_ndc
+    official_url: "https://open.fda.gov/apis/drug/ndc/"
+    api_endpoint: "https://api.fda.gov/drug/ndc.json"
+    description: >
+      NDC Directory product records including brand names, labelers,
+      ingredients, dosage forms, and packaging when provided.
+    license_terms: "https://open.fda.gov/apis/terms/"
+    format: json
+    retrieval_method: api_pagination
+    default_limit_per_page: 100
+    max_limit_per_page: 1000
+    schema_version: "openfda-drug-ndc-v1"
+    enabled: true
+
+  openfda_recalls:
+    name: "OpenFDA Drug Enforcement / Recalls"
+    short_name: openfda_recalls
+    official_url: "https://open.fda.gov/apis/drug/enforcement/"
+    api_endpoint: "https://api.fda.gov/drug/enforcement.json"
+    description: >
+      FDA drug enforcement and recall records including classification,
+      product description, recalling firm, and reason for recall.
+    license_terms: "https://open.fda.gov/apis/terms/"
+    format: json
+    retrieval_method: api_pagination
+    default_limit_per_page: 100
+    max_limit_per_page: 1000
+    schema_version: "openfda-drug-enforcement-v1"
+    enabled: true
+
+  dailymed:
+    name: "DailyMed SPL Drug Labels"
+    short_name: dailymed
+    official_url: "https://dailymed.nlm.nih.gov/dailymed/spl-resources-all-drug-labels.cfm"
+    api_base: "https://dailymed.nlm.nih.gov/dailymed/services/v2"
+    description: >
+      Structured Product Labeling (SPL) resources for US marketed drugs.
+    license_terms: "https://www.nlm.nih.gov/copyright.html"
+    format: json_xml
+    retrieval_method: api_and_bulk
+    schema_version: "dailymed-v2"
+    enabled: false  # enable after OpenFDA vertical slice is verified
+
+  cms_part_d:
+    name: "CMS Medicare Part D Prescribers"
+    short_name: cms_part_d
+    official_url: "https://data.cms.gov/provider-summary-by-type-of-service/medicare-part-d-prescribers"
+    description: >
+      Medicare Part D prescription utilization and expenditure by provider.
+      Drug-level fields vary by dataset version; inspect schema before use.
+    license_terms: "https://data.cms.gov/"
+    format: csv_api
+    retrieval_method: bulk_or_api
+    schema_version: "cms-part-d-v1"
+    enabled: false  # enable after schema inspection and download path verified

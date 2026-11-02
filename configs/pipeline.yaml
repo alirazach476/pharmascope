@@ -1,0 +1,35 @@
+pipeline:
+  name: pharmascope_main
+  version: "0.1.0"
+  layers:
+    raw:
+      path: raw
+      partition_by: [source, extraction_date]
+    bronze:
+      path: bronze
+      partition_by: [source, batch_id]
+    silver:
+      path: silver
+      partition_by: [entity]
+    gold:
+      path: gold
+      partition_by: [mart]
+    quarantine:
+      path: quarantine
+      partition_by: [source, reason]
+
+  extraction:
+    default_page_size: 100
+    default_dev_limit: 1000
+    checkpoint_enabled: true
+    preserve_raw_payloads: true
+    idempotent_reruns: true
+
+  quality:
+    critical_blocks_promotion: true
+    write_quarantine_on_schema_fail: true
+    report_dir: reports/quality
+
+  warehouse:
+    engine: duckdb
+    create_views_on_gold: true

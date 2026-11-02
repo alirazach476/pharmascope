@@ -1,0 +1,1 @@
+{"sources": [{"source_system": "synthetic_generator", "n": 49995031}, {"source_system": "medicine_dataset.csv", "n": 50000}, {"source_system": "Pakistan_medicines.csv", "n": 19060}, {"source_system": "openfda_ndc", "n": 4969}]}
