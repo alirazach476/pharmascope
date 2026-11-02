@@ -5,17 +5,13 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
-  Legend,
   Treemap,
 } from "recharts";
-import { api, CHART_COLORS, fmt, type DashboardBundle } from "../api";
+import { ChartFrame } from "../components/ChartFrame";
+import { api, fmt, type DashboardBundle } from "../api";
 
 export default function Market() {
   const [dash, setDash] = useState<DashboardBundle | null>(null);
@@ -77,23 +73,26 @@ export default function Market() {
         <div className="panel">
           <h3>Region share</h3>
           <div className="chart-box">
-            <ResponsiveContainer>
-              <PieChart>
-                <Pie data={dash?.by_region ?? []} dataKey="n" nameKey="market_region" outerRadius={90}>
-                  {(dash?.by_region ?? []).map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                  ))}
-                </Pie>
+            <ChartFrame empty={!dash?.by_region?.length}>
+              <BarChart data={dash?.by_region ?? []} layout="vertical" margin={{ left: 8 }}>
+                <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
+                <XAxis type="number" tick={{ fill: "#93a0b8", fontSize: 10 }} />
+                <YAxis
+                  type="category"
+                  dataKey="market_region"
+                  width={110}
+                  tick={{ fill: "#93a0b8", fontSize: 10 }}
+                />
                 <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+                <Bar dataKey="n" fill="#e6a23c" radius={[0, 6, 6, 0]} />
+              </BarChart>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Therapeutic classes</h3>
           <div className="chart-box">
-            <ResponsiveContainer>
+            <ChartFrame empty={!dash?.by_class?.length}>
               <BarChart data={dash?.by_class ?? []}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis dataKey="therapeutic_class" hide />
@@ -101,13 +100,13 @@ export default function Market() {
                 <Tooltip />
                 <Bar dataKey="n" fill="#3d8bfd" />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Strength profile</h3>
           <div className="chart-box">
-            <ResponsiveContainer>
+            <ChartFrame empty={!dash?.by_strength?.length}>
               <BarChart data={dash?.by_strength ?? []}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis dataKey="strength_bucket" tick={{ fill: "#93a0b8", fontSize: 9 }} />
@@ -115,7 +114,7 @@ export default function Market() {
                 <Tooltip />
                 <Bar dataKey="n" fill="#8b7cf6" />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
       </div>
@@ -124,7 +123,7 @@ export default function Market() {
         <div className="panel">
           <h3>Launch-year volume</h3>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={!dash?.by_year?.length}>
               <AreaChart data={dash?.by_year ?? []}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis dataKey="launch_year" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -132,15 +131,15 @@ export default function Market() {
                 <Tooltip />
                 <Area type="monotone" dataKey="n" stroke="#e6a23c" fill="#e6a23c33" />
               </AreaChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Manufacturer treemap</h3>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={!tree.length}>
               <Treemap data={tree} dataKey="size" nameKey="name" stroke="#0b1220" fill="#1aa6a0" />
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
       </div>

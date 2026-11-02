@@ -11,11 +11,11 @@ import {
   LineChart,
   Pie,
   PieChart,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
+import { ChartFrame } from "../components/ChartFrame";
 import { api, CHART_COLORS } from "../api";
 
 export default function Recalls() {
@@ -83,7 +83,7 @@ export default function Recalls() {
         <div className="panel">
           <h3>Classification mix</h3>
           <div className="chart-box">
-            <ResponsiveContainer>
+            <ChartFrame empty={!classTotals.length}>
               <PieChart>
                 <Pie data={classTotals} dataKey="recall_count" nameKey="classification" outerRadius={90}>
                   {classTotals.map((_, i) => (
@@ -93,13 +93,13 @@ export default function Recalls() {
                 <Tooltip />
                 <Legend />
               </PieChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Busiest months</h3>
           <div className="chart-box">
-            <ResponsiveContainer>
+            <ChartFrame empty={!topMonths.length}>
               <BarChart data={topMonths}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis dataKey="year_month" tick={{ fill: "#93a0b8", fontSize: 8 }} />
@@ -107,13 +107,13 @@ export default function Recalls() {
                 <Tooltip />
                 <Bar dataKey="total" fill="#e35d6a" />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Total trend</h3>
           <div className="chart-box">
-            <ResponsiveContainer>
+            <ChartFrame empty={!series.length}>
               <AreaChart data={series}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis dataKey="year_month" hide />
@@ -121,7 +121,7 @@ export default function Recalls() {
                 <Tooltip />
                 <Area type="monotone" dataKey="total" stroke="#e6a23c" fill="#e6a23c33" />
               </AreaChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
       </div>
@@ -129,7 +129,7 @@ export default function Recalls() {
       <div className="panel">
         <h3>Recalls by classification over time</h3>
         <div className="chart-box tall">
-          <ResponsiveContainer>
+          <ChartFrame empty={!series.length}>
             <LineChart data={series}>
               <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
               <XAxis dataKey="year_month" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -147,7 +147,7 @@ export default function Recalls() {
                 />
               ))}
             </LineChart>
-          </ResponsiveContainer>
+          </ChartFrame>
         </div>
       </div>
     </>

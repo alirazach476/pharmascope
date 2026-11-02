@@ -7,7 +7,6 @@ import {
   CartesianGrid,
   ComposedChart,
   Line,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
@@ -16,6 +15,7 @@ import {
   ScatterChart,
   ZAxis,
 } from "recharts";
+import { ChartFrame } from "../components/ChartFrame";
 import { api } from "../api";
 
 export default function Safety() {
@@ -79,7 +79,7 @@ export default function Safety() {
         <div className="panel">
           <h3>Monthly reports + 3-period rolling mean</h3>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={!rolling.length}>
               <ComposedChart data={rolling}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis dataKey="year_month" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -89,13 +89,13 @@ export default function Safety() {
                 <Bar dataKey="report_count" fill="#1aa6a0" name="Reports" />
                 <Line type="monotone" dataKey="rolling_3" stroke="#e6a23c" strokeWidth={2.5} name="Rolling mean" />
               </ComposedChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Cumulative reported cases</h3>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={!cumulative.length}>
               <AreaChart data={cumulative}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis dataKey="year_month" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -103,7 +103,7 @@ export default function Safety() {
                 <Tooltip />
                 <Area type="monotone" dataKey="cumulative" stroke="#3d8bfd" fill="#3d8bfd33" />
               </AreaChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function Safety() {
         <div className="panel">
           <h3>Top reported products</h3>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={!top.length}>
               <BarChart data={top} layout="vertical" margin={{ left: 20 }}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis type="number" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -120,13 +120,13 @@ export default function Safety() {
                 <Tooltip />
                 <Bar dataKey="report_count" fill="#e35d6a" />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Rank vs report volume</h3>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={!scatter.length}>
               <ScatterChart>
                 <CartesianGrid stroke="#243049" />
                 <XAxis type="number" dataKey="rank" name="Rank" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -135,7 +135,7 @@ export default function Safety() {
                 <Tooltip cursor={{ strokeDasharray: "3 3" }} />
                 <Scatter data={scatter} fill="#8b7cf6" />
               </ScatterChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
       </div>

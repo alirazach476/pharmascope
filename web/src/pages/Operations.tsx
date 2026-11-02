@@ -6,12 +6,12 @@ import {
   Cell,
   Pie,
   PieChart,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
   Legend,
 } from "recharts";
+import { ChartFrame } from "../components/ChartFrame";
 import { api, CHART_COLORS, fmt } from "../api";
 
 export default function Operations() {
@@ -108,7 +108,7 @@ export default function Operations() {
         <div className="panel">
           <h3>Run status</h3>
           <div className="chart-box">
-            <ResponsiveContainer>
+            <ChartFrame empty={!statusMix.length}>
               <PieChart>
                 <Pie data={statusMix} dataKey="count" nameKey="status" outerRadius={90}>
                   {statusMix.map((_, i) => (
@@ -118,13 +118,13 @@ export default function Operations() {
                 <Tooltip />
                 <Legend />
               </PieChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Records by source</h3>
           <div className="chart-box">
-            <ResponsiveContainer>
+            <ChartFrame empty={!bySource.length}>
               <BarChart data={bySource}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis dataKey="source" tick={{ fill: "#93a0b8", fontSize: 9 }} />
@@ -132,13 +132,13 @@ export default function Operations() {
                 <Tooltip />
                 <Bar dataKey="records" fill="#1aa6a0" />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Failed checks by severity</h3>
           <div className="chart-box">
-            <ResponsiveContainer>
+            <ChartFrame empty={!severityFail.length} emptyMessage="No failed DQ checks in snapshot.">
               <BarChart data={severityFail}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis dataKey="severity" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -146,7 +146,7 @@ export default function Operations() {
                 <Tooltip />
                 <Bar dataKey="count" fill="#e35d6a" />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
       </div>

@@ -6,17 +6,13 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
   Line,
   LineChart,
-  Pie,
-  PieChart,
   Radar,
   RadarChart,
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
-  ResponsiveContainer,
   Scatter,
   ScatterChart,
   Tooltip,
@@ -24,7 +20,8 @@ import {
   YAxis,
   ZAxis,
 } from "recharts";
-import { api, CHART_COLORS, fmt, type DashboardBundle } from "../api";
+import { ChartFrame } from "../components/ChartFrame";
+import { api, fmt, type DashboardBundle } from "../api";
 
 export default function Overview() {
   const navigate = useNavigate();
@@ -92,6 +89,16 @@ export default function Overview() {
       .slice(0, 10);
   }, [dash]);
 
+  const authenticityBars = useMemo(() => {
+    const rows = [...(dash?.authenticity ?? [])].sort((a, b) => Number(b.n) - Number(a.n));
+    const total = rows.reduce((s, r) => s + Number(r.n || 0), 0) || 1;
+    return rows.map((r) => ({
+      origin: String(r.origin),
+      n: Number(r.n),
+      pct: Number(((Number(r.n) / total) * 100).toFixed(2)),
+    }));
+  }, [dash]);
+
   const stats = dash?.stats;
 
   function onSearchName(e: FormEvent) {
@@ -146,32 +153,30 @@ export default function Overview() {
 
       <div className="grid-3">
         <div className="panel">
-          <h3>Authenticity mix</h3>
-          <div className="sub">Seed vs synthetic fill</div>
+          <h3>Source mix</h3>
+          <div className="sub">Share of catalog rows by origin (%)</div>
           <div className="chart-box">
-            <ResponsiveContainer>
-              <PieChart>
-                <Pie
-                  data={dash?.authenticity ?? []}
-                  dataKey="n"
-                  nameKey="origin"
-                  innerRadius={55}
-                  outerRadius={90}
-                >
-                  {(dash?.authenticity ?? []).map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            <ChartFrame empty={!authenticityBars.length}>
+              <BarChart data={authenticityBars} layout="vertical" margin={{ left: 8, right: 16 }}>
+                <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
+                <XAxis type="number" domain={[0, 100]} tick={{ fill: "#93a0b8", fontSize: 10 }} unit="%" />
+                <YAxis
+                  type="category"
+                  dataKey="origin"
+                  width={140}
+                  tick={{ fill: "#93a0b8", fontSize: 10 }}
+                />
+                <Tooltip formatter={(v) => [`${v}%`, "share"]} />
+                <Bar dataKey="pct" fill="#1aa6a0" radius={[0, 6, 6, 0]} />
+              </BarChart>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Dosage forms</h3>
           <div className="sub">Top forms in catalog</div>
           <div className="chart-box">
-            <ResponsiveContainer>
+            <ChartFrame empty={!dash?.by_form?.length}>
               <BarChart data={(dash?.by_form ?? []).slice(0, 8)}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis dataKey="dosage_form" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -179,14 +184,14 @@ export default function Overview() {
                 <Tooltip />
                 <Bar dataKey="n" fill="#1aa6a0" radius={[6, 6, 0, 0]} />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Routes</h3>
           <div className="sub">Top administration routes</div>
           <div className="chart-box">
-            <ResponsiveContainer>
+            <ChartFrame empty={!topRoutes.length}>
               <BarChart data={topRoutes} layout="vertical" margin={{ left: 8, right: 8 }}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis type="number" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -199,7 +204,7 @@ export default function Overview() {
                 <Tooltip />
                 <Bar dataKey="n" fill="#8b7cf6" radius={[0, 6, 6, 0]} />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
       </div>
@@ -209,7 +214,7 @@ export default function Overview() {
           <h3>Therapeutic class radar</h3>
           <div className="sub">Relative class volumes</div>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={radarData.length < 3}>
               <RadarChart data={radarData}>
                 <PolarGrid stroke="#243049" />
                 <PolarAngleAxis dataKey="class" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -217,14 +222,14 @@ export default function Overview() {
                 <Radar dataKey="n" stroke="#3d8bfd" fill="#3d8bfd" fillOpacity={0.35} />
                 <Tooltip />
               </RadarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Market regions</h3>
           <div className="sub">Synthetic regional allocation</div>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={!dash?.by_region?.length}>
               <BarChart data={dash?.by_region ?? []} layout="vertical" margin={{ left: 20 }}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis type="number" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -237,7 +242,7 @@ export default function Overview() {
                 <Tooltip />
                 <Bar dataKey="n" fill="#e6a23c" radius={[0, 6, 6, 0]} />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
       </div>
@@ -247,7 +252,7 @@ export default function Overview() {
           <h3>Synthetic launch-year timeline</h3>
           <div className="sub">Assigned demo years (not real marketing dates)</div>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={!dash?.by_year?.length}>
               <AreaChart data={dash?.by_year ?? []}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis dataKey="launch_year" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -255,14 +260,14 @@ export default function Overview() {
                 <Tooltip />
                 <Area type="monotone" dataKey="n" stroke="#1aa6a0" fill="#1aa6a033" />
               </AreaChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Strength buckets</h3>
           <div className="sub">Synthetic strength_mg distribution</div>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={!dash?.by_strength?.length}>
               <BarChart data={dash?.by_strength ?? []}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis dataKey="strength_bucket" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -270,7 +275,7 @@ export default function Overview() {
                 <Tooltip />
                 <Bar dataKey="n" fill="#8b7cf6" radius={[6, 6, 0, 0]} />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
       </div>
@@ -280,7 +285,7 @@ export default function Overview() {
           <h3>Top ingredients</h3>
           <div className="sub">Catalog-wide active ingredient counts</div>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={!dash?.by_ingredient?.length}>
               <BarChart data={(dash?.by_ingredient ?? []).slice(0, 12)} layout="vertical" margin={{ left: 10 }}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis type="number" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -293,14 +298,14 @@ export default function Overview() {
                 <Tooltip />
                 <Bar dataKey="n" fill="#5ad1e6" radius={[0, 6, 6, 0]} />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Top manufacturers</h3>
           <div className="sub">Includes synthetic labelers</div>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={!dash?.top_manufacturers?.length}>
               <BarChart
                 data={(dash?.top_manufacturers ?? []).slice(0, 12)}
                 layout="vertical"
@@ -317,7 +322,7 @@ export default function Overview() {
                 <Tooltip />
                 <Bar dataKey="n" fill="#3d8bfd" radius={[0, 6, 6, 0]} />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
       </div>
@@ -326,7 +331,7 @@ export default function Overview() {
         <h3>Form × route concentration</h3>
         <div className="sub">Bubble size = medicine count</div>
         <div className="chart-box tall">
-          <ResponsiveContainer>
+          <ChartFrame empty={scatterData.length < 3}>
             <ScatterChart margin={{ left: 10, bottom: 10 }}>
               <CartesianGrid stroke="#243049" />
               <XAxis
@@ -348,7 +353,7 @@ export default function Overview() {
               <Tooltip cursor={{ strokeDasharray: "3 3" }} />
               <Scatter data={scatterData} fill="#1aa6a0" />
             </ScatterChart>
-          </ResponsiveContainer>
+          </ChartFrame>
         </div>
       </div>
 
@@ -357,7 +362,7 @@ export default function Overview() {
           <h3>Authentic AE trend</h3>
           <div className="sub">Warehouse FAERS sample — reported cases</div>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={!aeTrends.length} emptyMessage="FAERS trend snapshot unavailable.">
               <LineChart data={aeTrends}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis dataKey="year_month" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -365,14 +370,14 @@ export default function Overview() {
                 <Tooltip />
                 <Line type="monotone" dataKey="report_count" stroke="#e35d6a" strokeWidth={2.4} dot={false} />
               </LineChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
         <div className="panel">
           <h3>Top reported products (FAERS)</h3>
           <div className="sub">Authentic warehouse extract</div>
           <div className="chart-box tall">
-            <ResponsiveContainer>
+            <ChartFrame empty={!topDrugs.length} emptyMessage="Top-reported FAERS snapshot unavailable.">
               <BarChart data={topDrugs} layout="vertical" margin={{ left: 20 }}>
                 <CartesianGrid stroke="#243049" strokeDasharray="3 3" />
                 <XAxis type="number" tick={{ fill: "#93a0b8", fontSize: 10 }} />
@@ -385,7 +390,7 @@ export default function Overview() {
                 <Tooltip />
                 <Bar dataKey="report_count" fill="#e35d6a" radius={[0, 6, 6, 0]} />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartFrame>
           </div>
         </div>
       </div>

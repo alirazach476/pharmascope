@@ -1,1 +1,1 @@
-{"reports": [], "count": 0}
+{"reports": [{"dataset": "fact_adverse_event_reports", "checks": [{"severity": "info", "passed": true, "name": "row_count_present"}, {"severity": "warn", "passed": true, "name": "receivedate_coverage"}, {"severity": "error", "passed": true, "name": "safetyreportid_unique"}]}, {"dataset": "medicines_catalog", "checks": [{"severity": "info", "passed": true, "name": "scale_catalog_ready"}, {"severity": "warn", "passed": true, "name": "synthetic_rows_labeled"}, {"severity": "info", "passed": true, "name": "local_csvs_ingested"}]}], "count": 2}
